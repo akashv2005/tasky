@@ -14,3 +14,26 @@ gap: 6px;
 {
     height: 50px;
 }
+body
+{
+    background-color: #ebf2ff !important;
+}
+.mobile_btn
+{
+    display: none;
+}
+@media(max-width:768px)
+{
+    .mobile_btn
+    {
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        margin: 15px;
+        display: flex;
+    }
+    .comp_btn
+    {
+        display: none;
+    }
+}
