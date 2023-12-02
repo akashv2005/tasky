@@ -10,10 +10,13 @@ var htmltaskcontents = ({id,title,url,type,description}) =>
                     </div>
                     <div class="card-body task_card_body"> 
                        ${
-                       url &&
+                       url ?
                        `<img src="${url}" width="100%" alt="Task Image" class="card-img-top md-3 rounded-lg">`
+                       :
+                       `<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Placeholder_view_vector.svg/310px-Placeholder_view_vector.svg.png" width="100%" alt="Task Image" class="card-img-top md-3 rounded-lg">`
                         }
-                        <h5 class="card-title task_card_title">${title}</h5>
+                        <h4 class="card-title task_card_title">${title}</h4>
+                        <span class="badge text-bg-primary">${type}</span>
                         <p class="card-text trim-3-lines text-muted data-gram_editor='false' task_card_description">${description}</p>
                     <div class="card-footer d-flex task_card_footer">
                     <!--Open Task Button-->
@@ -22,6 +25,49 @@ var htmltaskcontents = ({id,title,url,type,description}) =>
                         Open Task</button>
                     </div>
                 </div>
-            </div>`
+            </div>`;
+var htmltaskmodalbody =({id,title,url,description,type}) =>
+{
+var date = newDate(parseInt(id));
+return
+`<div id=${id}>
+${
+    url ?
+    `<img width='100%' src="${url}" class="card-img-top">`
+    :
+    `<img width='100%' src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Placeholder_view_vector.svg/310px-Placeholder_view_vector.svg.png" class="card-img-top">`
+}
+<strong class="text-sm text-muted">Created on ${date.toDateString()}</strong>
+<h2 class="my-3">${title}</h2>
+<p class="lead">${description}</p>
+</div>`
+}
+var updateLocalStorage = () =>
+{
+localStorage.setItem('task',JSON.stringify({tasks:state.taskList}));
+}
 
+var loadInitialData =() =>
+{
+    var localStorageCopy = JSON.parse(localStorage.tasks);
+    if(localStorageCopy)state.taskList = localStorageCopy.tasks
+    {
+        taskList.map((cardDate) =>
+        {
+        taskContents.insertAdjacentHTML("beforeend",htmltaskcontents(cardDate))
+        })
+    }
+}
 
+var handleSubmit = () =>
+{
+const id = `${Date.now()}`
+const input =
+{
+    url: document.getElementById("imageUrl").value,
+    title: document.getElementById("taskTitle").value,
+    type: document.getElementById("taskType").value,
+    description: document.getElementById("taskDesc").value,
+};
+taskContents.insertAdjacentHTML("beforeend", htmltaskcontents({...input,id}))
+}
