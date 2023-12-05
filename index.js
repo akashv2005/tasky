@@ -69,5 +69,9 @@ const input =
     type: document.getElementById("taskType").value,
     description: document.getElementById("taskDesc").value,
 };
-taskContents.insertAdjacentHTML("beforeend", htmltaskcontents({...input,id}))
+if(input.title==="" || input.type==="" || input.description==="")
+{
+   return alert("Please fill all the required details");
 }
+taskContents.insertAdjacentHTML("beforeend", htmltaskcontents({...input,id}))
+};
