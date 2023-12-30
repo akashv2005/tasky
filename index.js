@@ -1,7 +1,7 @@
 var state = {taskList:[]};
 var taskContents = document.querySelector(".task_contents");
 var taskModal = document.querySelector(".task_modal_body");
-var htmltaskcontents = ({id,title,url,type,description}) =>
+var htmlTaskContent = ({id,title,url,type,description}) =>
 `<div class="col-md-6 col-lg-4 mt-3" id=${id} key=${id}>
                 <div class="card shadow-sm task_card">
                     <div class="card-header d-flex justify-content-end task_card_header">
@@ -26,7 +26,7 @@ var htmltaskcontents = ({id,title,url,type,description}) =>
                     </div>
                 </div>
             </div>`;
-var htmltaskmodalbody =({id,title,url,description,type}) =>
+var htmlModalContent  =({id,title,url,description,type}) =>
 {
 var date = newDate(parseInt(id));
 return
@@ -54,7 +54,7 @@ var loadInitialData =() =>
     {
         taskList.map((cardDate) =>
         {
-        taskContents.insertAdjacentHTML("beforeend",htmltaskcontents(cardDate))
+        taskContents.insertAdjacentHTML("beforeend",htmlTaskContent(cardDate))
         })
     }
 }
@@ -73,5 +73,33 @@ if(input.title==="" || input.type==="" || input.description==="")
 {
    return alert("Please fill all the required details");
 }
-taskContents.insertAdjacentHTML("beforeend", htmltaskcontents({...input,id}))
+taskContents.insertAdjacentHTML("beforeend", htmlTaskContent({...input,id}));
+  state.taskList.push({ ...input, id });
+  updateLocalStorage();
+};
+var openTask = (e) => {
+  if (!e) e = window.event;
+
+  var getTask = state.taskList.find(({ id }) => id === e.target.id);
+  taskModal.innerHTML = htmlModalContent(getTask);
+};
+
+var deleteTask = (e) => {
+  if (!e) e = window.event;
+  var targetID = e.target.getAttribute("name");
+  var type = e.target.tagName;
+  var removeTask = state.taskList.filter(({ id }) => id !== targetID);
+
+  state.taskList = removeTask;
+  updateLocalStorage();
+
+  if (type === "BUTTON") {
+    console.log(e.target.parentNode.parentNode.parentNode);
+    return e.target.parentNode.parentNode.parentNode.parentNode.removeChild(
+      e.target.parentNode.parentNode.parentNode
+    );
+  }
+  return e.target.parentNode.parentNode.parentNode.parentNode.parentNode.removeChild(
+    e.target.parentNode.parentNode.parentNode.parentNode
+  );
 };
