@@ -5,8 +5,10 @@ var htmlTaskContent = ({id,title,url,type,description}) =>
 `<div class="col-md-6 col-lg-4 mt-3" id=${id} key=${id}>
                 <div class="card shadow-sm task_card">
                     <div class="card-header d-flex justify-content-end task_card_header">
-                        <button type="button" class="btn btn-outline-info mr-2 "><i class="fas fa-pencil-alt"></i></button>
-                        <button type="button" class="btn btn-outline-danger mr-2"><i class="fas fa-trash-alt"></i></button>
+                        <button type="button" class="btn btn-outline-info mr-2 ">
+                        <i class="fas fa-pencil-alt" name=${id}></i></button>
+                        <button type="button" class="btn btn-outline-danger mr-2" name="${id}" onclick="deleteTask.apply(this, arguments)">
+                        <i class="fas fa-trash-alt" name=${id}></i></button>
                     </div>
                     <div class="card-body task_card_body"> 
                        ${
