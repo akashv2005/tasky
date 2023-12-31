@@ -2,32 +2,35 @@ var state = {taskList:[]};
 var taskContents = document.querySelector(".task_contents");
 var taskModal = document.querySelector(".task_modal_body");
 var htmlTaskContent = ({id,title,url,type,description}) =>
-`<div class="col-md-6 col-lg-4 mt-3" id=${id} key=${id}>
-                <div class="card shadow-sm task_card">
-                    <div class="card-header d-flex justify-content-end task_card_header">
-                        <button type="button" class="btn btn-outline-info mr-2 ">
-                        <i class="fas fa-pencil-alt" name=${id}></i></button>
-                        <button type="button" class="btn btn-outline-danger mr-2" name="${id}" onclick="deleteTask.apply(this, arguments)">
-                        <i class="fas fa-trash-alt" name=${id}></i></button>
-                    </div>
-                    <div class="card-body task_card_body"> 
-                       ${
-                       url ?
-                       `<img src="${url}" width="100%" alt="Task Image" class="card-img-top md-3 rounded-lg">`
-                       :
-                       `<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Placeholder_view_vector.svg/310px-Placeholder_view_vector.svg.png" width="100%" alt="Task Image" class="card-img-top md-3 rounded-lg">`
-                        }
-                        <h4 class="card-title task_card_title">${title}</h4>
-                        <span class="badge text-bg-primary">${type}</span>
-                        <p class="card-text trim-3-lines text-muted data-gram_editor='false' task_card_description">${description}</p>
-                    <div class="card-footer d-flex task_card_footer">
-                    <!--Open Task Button-->
-                    <button type="button" class="btn btn-primary d-flex align-items-center gap-2 float-end" data-bs-toggle="modal"
-                        data-bs-target="#opentaskModal">
-                        Open Task</button>
-                    </div>
-                </div>
-            </div>`;
+ `<div class='col-md-6 col-lg-4 mt-3' id=${id} key=${id}>
+        <div class='card shadow-sm task__card'>
+            <div class='card-header d-flex justify-content-end task__card__header'>
+              <button type="button" class="btn btn-outline-info mr-2" name="${id}" onclick="editTask.apply(this, arguments)">
+                <i class="fas fa-pencil-alt" name=${id}></i>
+              </button>
+               <button type="button" class="btn btn-outline-danger mr-2" name="${id}" onclick="deleteTask.apply(this, arguments)">
+                <i class="fas fa-trash-alt" name=${id}></i>
+              </button>
+            </div>
+            <div class="card-body">
+               ${
+                 url
+                   ? `<img width='100%' src=${url} alt='card image cap' class='card-img-top md-3 rounded-lg' />`
+                   : `<img width='100%' src="https://tse3.mm.bing.net/th?id=OIP.gfPiEBkEoh2CVhk8yV8HLwAAAA&pid=Api&P=0&h=180" alt='card image cap' class='card-img-top md-3 rounded-lg' />`
+               }
+            <h4 class="card-title">${title}</h4>
+            <p class="description trim-3-lines text-muted data-gram_editor='false'">${description}</p>
+            <div class="tags text-white d-flex flex-wrap">
+              <span class="badge bg-primary m-1">${type}</span>
+            </div>
+            </div>
+            <div class="card-footer">
+              <button type="button" class="btn btn-outline-primary float-right" data-bs-toggle="modal" data-bs-target="#showTask" id=${id}
+              onclick='openTask.apply(this, arguments)'
+              >Open Task</button>
+            </div>
+        </div>
+    </div>`;
 var htmlModalContent  =({id,title,url,description,type}) =>
 {
 var date = newDate(parseInt(id));
@@ -69,7 +72,7 @@ const input =
     url: document.getElementById("imageUrl").value,
     title: document.getElementById("taskTitle").value,
     type: document.getElementById("taskType").value,
-    description: document.getElementById("taskDesc").value,
+    description: document.getElementById("taskDescription").value,
 };
 if(input.title==="" || input.type==="" || input.description==="")
 {
@@ -104,4 +107,76 @@ var deleteTask = (e) => {
   return e.target.parentNode.parentNode.parentNode.parentNode.parentNode.removeChild(
     e.target.parentNode.parentNode.parentNode.parentNode
   );
+};
+var editTask = (e) => {
+  if (!e) e = window.event;
+  var targetID = e.target.id;
+  var type = e.target.tagName;
+
+  var parentNode;
+  let taskTitle;
+  var taskDescription;
+  var taskType;
+  let submitButton;
+
+  if (type === "BUTTON") {
+    parentNode = e.target.parentNode.parentNode;
+  } else {
+    parentNode = e.target.parentNode.parentNode.parentNode;
+  }
+
+  taskTitle = parentNode.childNodes[3].childNodes[3];
+  taskDescription = parentNode.childNodes[3].childNodes[5];
+  taskType = parentNode.childNodes[3].childNodes[7].childNodes[1];
+  submitButton = parentNode.childNodes[5].childNodes[1];
+
+  taskTitle.setAttribute("contenteditable", "true");
+  taskDescription.setAttribute("contenteditable", "true");
+  taskType.setAttribute("contenteditable", "true");
+
+  submitButton.setAttribute("onclick", "saveEdit.apply(this, arguments)");
+  submitButton.removeAttribute("data-bs-toggle");
+  submitButton.removeAttribute("data-bs-target");
+  submitButton.innerHTML = "Save Changes";
+};
+
+var saveEdit = (e) => {
+  if (!e) e = window.event;
+  var targetID = e.target.id;
+  var parentNode = e.target.parentNode.parentNode;
+  var taskTitle = parentNode.childNodes[3].childNodes[3];
+  var taskDescription = parentNode.childNodes[3].childNodes[5];
+  var taskType = parentNode.childNodes[3].childNodes[7].childNodes[1];
+  var submitButton = parentNode.childNodes[5].childNodes[1];
+
+  var updateData = {
+    taskTitle: taskTitle.innerHTML,
+    taskDescription: taskDescription.innerHTML,
+    taskType: taskType.innerHTML,
+  };
+
+  var stateCopy = state.taskList;
+  stateCopy = stateCopy.map((task) =>
+    task.id === targetID
+      ? {
+          id: task.id,
+          title: updateData.taskTitle,
+          description: updateData.taskDescription,
+          type: updateData.taskType,
+          url: task.url,
+        }
+      : task
+  );
+
+  state.taskList = stateCopy;
+  updateLocalStorage();
+
+  taskTitle.setAttribute("contenteditable", "false");
+  taskDescription.setAttribute("contenteditable", "false");
+  taskType.setAttribute("contenteditable", "false");
+
+  submitButton.setAttribute("onclick", "openTask.apply(this, arguments)");
+  submitButton.setAttribute("data-bs-toggle", "modal");
+  submitButton.setAttribute("data-bs-target", "#showTask");
+  submitButton.innerHTML = "Open Task";
 };
