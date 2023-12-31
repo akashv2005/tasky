@@ -30,11 +30,11 @@ var htmlTaskContent = ({id,title,url,type,description}) =>
             </div>
         </div>
     </div>`;
-var htmlModalContent  =({id,title,url,description,type}) =>
+var htmlModalContent =({id,title,url,description}) =>
 {
-var date = newDate(parseInt(id));
-return
-`<div id=${id}>
+var date = new Date(parseInt(id));
+return`
+<div id=${id}>
 ${
     url ?
     `<img width='100%' src="${url}" class="card-img-top">`
