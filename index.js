@@ -26,8 +26,7 @@ var htmlTaskContent = ({id,title,url,type,description}) =>
             </div>
             <div class="card-footer">
               <button type="button" class="btn btn-outline-primary float-right" data-bs-toggle="modal" data-bs-target="#showTask" id=${id}
-              onclick='openTask.apply(this, arguments)'
-              >Open Task</button>
+              onclick="openTask.apply(this, arguments)">Open Task</button>
             </div>
         </div>
     </div>`;
@@ -49,19 +48,17 @@ ${
 }
 var updateLocalStorage = () =>
 {
-localStorage.setItem('task',JSON.stringify({tasks:state.taskList}));
+localStorage.setItem("task",JSON.stringify({tasks:state.taskList,}));
 }
 
 var loadInitialData =() =>
 {
-    var localStorageCopy = JSON.parse(localStorage.tasks);
-    if(localStorageCopy)state.taskList = localStorageCopy.tasks
-    {
-        taskList.map((cardDate) =>
+    var localStorageCopy = JSON.parse(localStorage.task);
+    if(localStorageCopy) state.taskList = localStorageCopy.tasks;
+        state.taskList.map((cardDate) =>
         {
         taskContents.insertAdjacentHTML("beforeend",htmlTaskContent(cardDate))
         })
-    }
 }
 
 var handleSubmit = () =>
@@ -84,7 +81,6 @@ taskContents.insertAdjacentHTML("beforeend", htmlTaskContent({...input,id}));
 };
 var openTask = (e) => {
   if (!e) e = window.event;
-
   var getTask = state.taskList.find(({ id }) => id === e.target.id);
   taskModal.innerHTML = htmlModalContent(getTask);
 };
